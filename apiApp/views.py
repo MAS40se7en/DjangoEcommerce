@@ -3,6 +3,7 @@ from .models import CartItem, Product, Category, Cart, Review, Wishlist
 from .serializers import CartSerializer, CategoryDetailSerializer, ProductListSerializer, ProductDetailSerializer, CategoryListSerializer, CartItemSerializer, ReviewSerializer, WishlistSerializer
 from rest_framework.response import Response
 from django.contrib.auth import get_user_model
+from django.db.models import Q
 
 User = get_user_model()
 
@@ -124,3 +125,22 @@ def delete_cartitem(request, pk):
     cartitem.delete()
 
     return Response({"message": "Cart item deleted successfully!"}, status=204)
+
+@api_view(['GET'])
+def product_search(request):
+    query = request.query_params.get("query")
+    if not query:
+        return Response(status = 204)
+    
+    products = Product.objects.filter(
+        Q(name__icontains=query) | 
+        Q(description__icontains=query) |
+        Q(category__name__icontains=query)
+    )
+
+    if not products:
+        return Response({"message": "No products found!"}, status=204)
+
+    serializer = ProductListSerializer(products, many=True)
+    return Response({"data": serializer.data, "message": "Products found!"}, status=200)
+    

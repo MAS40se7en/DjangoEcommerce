@@ -13,4 +13,7 @@ urlpatterns = [
     path('delete_review/<int:pk>/', views.delete_review, name='delete_review'),
     path('update_review/<int:pk>/', views.update_review, name='update_review'),
     path('wishlist/', views.add_to_wishlist, name='add_to_wishlist'),
+
+    #should have a ?query={search term} after the url
+    path('search/', views.product_search, name='product_search'),
 ]
