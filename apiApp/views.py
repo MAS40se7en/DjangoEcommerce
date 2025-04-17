@@ -1,8 +1,10 @@
 from rest_framework.decorators import api_view
-from .models import CartItem, Product, Category, Cart, Review
-from .serializers import CartSerializer, CategoryDetailSerializer, ProductListSerializer, ProductDetailSerializer, CategoryListSerializer, CartItemSerializer, ReviewSerializer
+from .models import CartItem, Product, Category, Cart, Review, Wishlist
+from .serializers import CartSerializer, CategoryDetailSerializer, ProductListSerializer, ProductDetailSerializer, CategoryListSerializer, CartItemSerializer, ReviewSerializer, WishlistSerializer
 from rest_framework.response import Response
 from django.contrib.auth import get_user_model
+
+User = get_user_model()
 
 @api_view(['GET'])
 def product_list(request):
@@ -58,7 +60,6 @@ def update_cartitem_quantity(request):
 
 @api_view(['POST'])
 def add_review(request):
-    User = get_user_model()
     product_id = request.data.get('product_id')
     email = request.data.get('email')
     rating = request.data.get('rating')
@@ -96,3 +97,23 @@ def delete_review(request, pk):
     review.delete()
 
     return Response({"message": "Review deleted successfully!"}, status=204)
+
+@api_view(['POST'])
+def add_to_wishlist(request):
+    email = request.data.get('email')
+    product_id = request.data.get('product_id')
+
+    user = User.objects.get(email=email)
+    product = Product.objects.get(id=product_id)
+
+    wishlist = Wishlist.objects.filter(user=user, product=product)
+
+    if wishlist:
+        wishlist.delete()
+        return Response("Product removed from wishlist successfully!", status=204)
+    
+
+    new_wishlist = Wishlist.objects.create(user=user, product=product)
+    serilaizer = WishlistSerializer(new_wishlist)
+
+    return Response({"data": serilaizer.data,"message": "Product added to wishlist successfully!"})
