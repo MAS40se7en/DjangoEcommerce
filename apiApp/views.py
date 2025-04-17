@@ -67,8 +67,32 @@ def add_review(request):
     product = Product.objects.get(id=product_id)
     user = User.objects.get(email=email)
 
+    if Review.objects.filter(product=product, user=user).exists():
+        return Response({"message": "You have already reviewed this product!"}, status=400)
+
     review = Review.objects.create(product=product, user=user, rating=rating, review=review_text)
 
     serializer = ReviewSerializer(review)
 
     return Response({"data": serializer.data, "message": "Review added successfully!"})
+
+@api_view(['PUT'])
+def update_review(request, pk):
+    review = Review.objects.get(id=pk)
+    rating = request.data.get('rating')
+    review_text = request.data.get('review')
+
+    review.rating = rating
+    review.review = review_text
+    review.save()
+
+    serializer = ReviewSerializer(review)
+
+    return Response({"data": serializer.data, "message": "Review updated successfully!"})
+
+@api_view(['DELETE'])
+def delete_review(request, pk):
+    review = Review.objects.get(id=pk)
+    review.delete()
+
+    return Response({"message": "Review deleted successfully!"}, status=204)
