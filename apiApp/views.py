@@ -4,6 +4,10 @@ from .serializers import CartSerializer, CategoryDetailSerializer, ProductListSe
 from rest_framework.response import Response
 from django.contrib.auth import get_user_model
 from django.db.models import Q
+import stripe
+from django.conf import settings
+
+stripe.api_key = settings.STRIPE_SECRET_KEY
 
 User = get_user_model()
 
@@ -143,4 +147,35 @@ def product_search(request):
 
     serializer = ProductListSerializer(products, many=True)
     return Response({"data": serializer.data, "message": "Products found!"}, status=200)
-    
+
+@api_view(['POST'])
+def create_checkout_session(request):
+    cart_code = request.data.get('cart_code')
+    email = request.data.get('email')
+    cart = Cart.objects.get(cart_code=cart_code)
+    try:
+        checkout_session = stripe.checkout.Session.create(
+            customer_email=email,
+            payment_method_types=['card'],
+            line_items=[
+                {
+                    'price_data': {
+                        'currency': 'usd',
+                        'product_data': {
+                            'name': item.product.name,
+                        },
+                        'unit_amount': int(item.product.price) * 100,
+                    },
+                    'quantity': item.quantity,
+                }
+
+                for item in cart.cartitems.all()
+            ],
+            mode='payment',
+            success_url='https://nextshoppit.vercel.app/success',
+            cancel_url='https://nextshoppit.vercel.app/cancel',
+        )
+
+        return Response({'data': checkout_session})
+    except Exception as e:
+        return Response({'error': str(e)}, status=400)

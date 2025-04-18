@@ -16,4 +16,6 @@ urlpatterns = [
 
     #should have a ?query={search term} after the url
     path('search/', views.product_search, name='product_search'),
+
+    path('create_checkout_session/', views.create_checkout_session, name='create_checkout_session'),
 ]
