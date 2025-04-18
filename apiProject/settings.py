@@ -29,8 +29,8 @@ SECRET_KEY = 'django-insecure-jq+@xlmd)k3)%3#-6$2^r-be8$%i6ss2d_j#b#y&o5vjdej3ft
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
-
+ALLOWED_HOSTS = ["6257-89-135-5-39.ngrok-free.app", "127.0.0.1"]
+CSRF_TRUSTED_ORIGINS = ['https://6257-89-135-5-39.ngrok-free.app']
 
 # Application definition
 
@@ -133,3 +133,4 @@ AUTH_USER_MODEL = 'apiApp.CustomUser'
 
 STRIPE_SECRET_KEY = os.getenv('STRIPE_SECRET_KEY')
 STRIPE_PUBLIC_KEY = os.getenv('STRIPE_PUBLIC_KEY')
+STRIPE_WEBHOOK = os.getenv('STRIPE_WEBHOOK')
