@@ -1,7 +1,7 @@
 from rest_framework.decorators import api_view
 from .models import CartItem, Order, OrderItem, Product, Category, Cart, Review, Wishlist
 from .serializers import CartSerializer, CategoryDetailSerializer, ProductListSerializer, ProductDetailSerializer, CategoryListSerializer, CartItemSerializer, ReviewSerializer, WishlistSerializer
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.response import Response
 from django.contrib.auth import get_user_model
@@ -18,7 +18,9 @@ User = get_user_model()
 def product_list(request):
     products = Product.objects.filter(featured=True)
     serializer = ProductListSerializer(products, many=True)
-    return Response(serializer.data)
+    return JsonResponse({
+        'data': serializer.data
+    })
 
 @api_view(['GET'])
 def product_detail(request, slug):

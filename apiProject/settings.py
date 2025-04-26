@@ -30,9 +30,15 @@ SECRET_KEY = 'django-insecure-jq+@xlmd)k3)%3#-6$2^r-be8$%i6ss2d_j#b#y&o5vjdej3ft
 DEBUG = True
 
 #ALLOWED_HOSTS = ["6257-89-135-5-39.ngrok-free.app", "127.0.0.1"]
-#CSRF_TRUSTED_ORIGINS = ['https://6257-89-135-5-39.ngrok-free.app']
+CSRF_TRUSTED_ORIGINS = ['https://6257-89-135-5-39.ngrok-free.app', 'http://127.0.0.1', 'http://localhost']
 
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS",).split(" ")
+
+CORS_ALLOWED_ORIGINS = [
+    'http://127.0.0.1:8000',
+    'http://127.0.0.1:3000',
+    'http://localhost:3000',
+]
 
 # Application definition
 
@@ -45,12 +51,15 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'apiApp',
     'rest_framework',
+
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
