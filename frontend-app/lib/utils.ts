@@ -1,3 +1,6 @@
+import { useState } from "react";
+import { ProductProps } from "./types";
+
 const apiService = {
     get: async function (url: string): Promise<any> {
         console.log('get', url)

@@ -7,3 +7,10 @@ export type ProductProps = {
     featured: boolean;
     category: string;
 }
+
+export type CategoryProps = {
+    id: number;
+    name: string;
+    slug: string;
+    category_image: string;
+}

@@ -5,17 +5,10 @@ import apiService from "@/lib/utils";
 import { useEffect, useState } from "react";
 
 const Products = ({}) => {
-    const [products, setProducts] = useState<ProductProps[]>([]);
-
-    const getProducts = async () => {
-        const url = '/api/product_list/';
-
-        const tmpProducts = await apiService.get(url);
-        setProducts(tmpProducts.data);
-    }
-
     useEffect(() => {
-        getProducts();
+        apiService.get('/api/product_list').then((response) => {
+            console.log(response)
+        });
     }, []);
     
   return <div>Products</div>

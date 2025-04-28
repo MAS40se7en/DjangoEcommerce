@@ -34,6 +34,7 @@ def category_list(request):
     serializer = CategoryListSerializer(categories, many=True)
     return Response(serializer.data)
 
+@api_view(['GET'])
 def category_detail(request, slug):
     category = Category.objects.get(slug=slug)
     serializer = CategoryDetailSerializer(category)
