@@ -1,6 +1,37 @@
 from rest_framework import serializers
-from .models import Product, Category, CartItem, Cart, Review, Wishlist
-from django.contrib.auth import get_user_model
+from .models import CustomUser, Product, Category, CartItem, Cart, Review, Wishlist
+from django.contrib.auth import get_user_model, authenticate
+
+class CustomUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomUser
+        fields = ["id", "email", "username", "address", "phone_number", "is_seller", "is_verified", "first_name", "last_name", "profile_picture_url"]
+
+class RegisterUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomUser
+        fields = ["email", "username", "password"]
+        extra_kwargs = {
+            "password": {
+                "write_only": True
+            }
+        }
+
+    def create(self, validated_data):
+        user = CustomUser.objects.create_user(**validated_data)
+        return user
+    
+class LoginUserSerializer(serializers.Serializer):
+    email = serializers.EmailField(required=True)
+    password = serializers.CharField(write_only=True, required=True)
+
+    def validate(self, data):
+        user = authenticate(**data)
+        if user and user.is_active:
+            return user
+        
+        raise serializers.ValidationError("Incorrect Credentials")
+
 
 class ProductListSerializer(serializers.ModelSerializer):
     class Meta:
@@ -57,19 +88,14 @@ class CartStatSerializer(serializers.ModelSerializer):
         total = [item.quantity for item in items]
         return total
     
-class UserSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = get_user_model()
-        fields = ["id", "first_name", "last_name", "profile_picture_url"]
-    
 class ReviewSerializer(serializers.ModelSerializer):
-    user = UserSerializer(read_only=True)
+    user = CustomUserSerializer(read_only=True)
     class Meta:
         model = Review
         fields = ["id", "user", "rating", "review", "created", "updated"]
 
 class WishlistSerializer(serializers.ModelSerializer):
-    user = UserSerializer(read_only=True)
+    user = CustomUserSerializer(read_only=True)
     product = ProductListSerializer(read_only=True)
     class Meta:
         model = Wishlist

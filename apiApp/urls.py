@@ -20,4 +20,11 @@ urlpatterns = [
     #stripe payments
     path('create_checkout_session/', views.create_checkout_session, name='create_checkout_session'),
     path('webhook/', views.my_webhook_view, name='webhook'),
+
+    #user
+    path('user_info/', views.UserInfoView.as_view(), name='user_info'),
+    path('register/', views.UserRegistrationView.as_view(), name='user_register'),
+    path('login/', views.UserLoginView.as_view(), name='user_login'),
+    path('logout/', views.UserLogoutView.as_view(), name='user_logout'),
+    path('refresh/', views.CookieTokenRefreshView.as_view(), name='token_refresh')
 ]
