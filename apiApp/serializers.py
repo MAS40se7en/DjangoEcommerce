@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from .models import CustomUser, Product, Category, CartItem, Cart, Review, Wishlist
-from django.contrib.auth import get_user_model, authenticate
+from django.contrib.auth import authenticate
 
 class CustomUserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -36,12 +36,12 @@ class LoginUserSerializer(serializers.Serializer):
 class ProductListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
-        fields = ["id", "name", "slug", "image", "price"]
+        fields = ["id", "name", "slug", "image", "price", "category", "featured"]
 
 class ProductDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
-        fields = ["id", "name", "slug", "description", "image", "price"]
+        fields = ["id", "name", "slug", "description", "image", "price", "category", "featured"]
 
 class CategoryDetailSerializer(serializers.ModelSerializer):
     products = ProductListSerializer(many=True, read_only=True)

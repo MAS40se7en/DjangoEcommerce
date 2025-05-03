@@ -1,3 +1,4 @@
+import random
 from rest_framework.decorators import api_view
 from .models import CartItem, Order, OrderItem, Product, Category, Cart, Review, Wishlist
 from .serializers import CartSerializer, CategoryDetailSerializer, CustomUserSerializer, LoginUserSerializer, ProductListSerializer, ProductDetailSerializer, CategoryListSerializer, CartItemSerializer, RegisterUserSerializer, ReviewSerializer, WishlistSerializer
@@ -26,7 +27,7 @@ class UserInfoView(RetrieveUpdateAPIView):
     permission_classes = (IsAuthenticated,)
     serializer_class = CustomUserSerializer
 
-    def get_Object(self):
+    def get_object(self):
         return self.request.user
 
 class UserRegistrationView(CreateAPIView):
@@ -119,7 +120,27 @@ class CookieTokenRefreshView(TokenRefreshView):
             }, status=status.HTTP_401_UNAUTHORIZED)
 
 @api_view(['GET'])
+def home_product_list(request):
+    product_ids = list(Product.objects.values_list('id', flat=True))
+    random_ids = random.sample(product_ids, min(len(product_ids), 20))
+    products = Product.objects.filter(id__in=random_ids)
+
+    serializer = ProductListSerializer(products, many=True)
+    return JsonResponse({
+        'data': serializer.data
+    })
+
+@api_view(['GET'])
 def product_list(request):
+    products = Product.objects.all()
+
+    serializer = ProductListSerializer(products, many=True)
+    return JsonResponse({
+        'data': serializer.data
+    })
+
+@api_view(['GET'])
+def featured_product_list(request):
     products = Product.objects.filter(featured=True)
     serializer = ProductListSerializer(products, many=True)
     return JsonResponse({

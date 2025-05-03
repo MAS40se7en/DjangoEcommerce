@@ -1,6 +1,5 @@
 'use client'
 
-import { ProductProps } from "@/lib/types";
 import apiService from "@/lib/utils";
 import { useEffect, useState } from "react";
 
