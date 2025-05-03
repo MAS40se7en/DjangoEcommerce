@@ -8,6 +8,7 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import apiService from "@/lib/utils";
+import Link from "next/link";
 
 const RegisterForm = ({}) => {
     const form = useForm<z.infer<typeof registerSchema>>({
@@ -34,7 +35,7 @@ const RegisterForm = ({}) => {
   
     return (
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5 min-w-[20rem] min-h-[25rem] max-w-[25rem] py-4">
             <FormField
               control={form.control}
               name="email"
@@ -42,7 +43,7 @@ const RegisterForm = ({}) => {
                 <FormItem>
                   <FormLabel>Email</FormLabel>
                   <FormControl>
-                    <Input placeholder="shadcn" {...field} />
+                    <Input placeholder="janedoe@example.com" {...field} />
                   </FormControl>
                   <FormDescription>
                     This field is for your email!
@@ -58,7 +59,7 @@ const RegisterForm = ({}) => {
                 <FormItem>
                   <FormLabel>Username</FormLabel>
                   <FormControl>
-                    <Input placeholder="shadcn" {...field} />
+                    <Input placeholder="janedoe123" {...field} />
                   </FormControl>
                   <FormDescription>
                     This is your public display name.
@@ -74,7 +75,7 @@ const RegisterForm = ({}) => {
                 <FormItem>
                   <FormLabel>Password</FormLabel>
                   <FormControl>
-                    <Input placeholder="shadcn" {...field} />
+                    <Input placeholder="123@/Abc" {...field} />
                   </FormControl>
                   <FormDescription>
                     This is your password
@@ -90,7 +91,7 @@ const RegisterForm = ({}) => {
                 <FormItem>
                   <FormLabel>Confirm Password</FormLabel>
                   <FormControl>
-                    <Input placeholder="shadcn" {...field} />
+                    <Input placeholder="123@/Abc" {...field} />
                   </FormControl>
                   <FormDescription>
                     Re-write your password here to confirm it
@@ -99,7 +100,18 @@ const RegisterForm = ({}) => {
                 </FormItem>
               )}
             />
-            <Button type="submit">Submit</Button>
+            <Button type="submit" className="w-full">Submit</Button>
+
+            <div>
+          <span>have an account? </span>
+          <Link
+            href="/auth/login"
+            className="font-semibold"
+          >
+            sign in
+          </Link>
+          !
+        </div>
           </form>
         </Form>
       )

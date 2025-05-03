@@ -1,4 +1,6 @@
 from django.urls import path
+from django.conf.urls.static import static
+from django.conf import settings
 from . import views
 
 urlpatterns = [
@@ -29,4 +31,4 @@ urlpatterns = [
     path('login/', views.UserLoginView.as_view(), name='user_login'),
     path('logout/', views.UserLogoutView.as_view(), name='user_logout'),
     path('refresh/', views.CookieTokenRefreshView.as_view(), name='token_refresh')
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

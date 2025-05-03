@@ -19,17 +19,35 @@ const ProductsLists = ({ }) => {
         <div className="px-3 pt-6">
             <h2 className="font-bold text-4xl">More Products</h2>
         </div>
-        <div className="grid grid-cols-2 lg:grid-cols-5 md:grid-cols-3 gap-5 px-10 w-full lg:w-3/4">
+        <div className="flex flex-row gap-5 px-10 overflow-auto pb-5">
             {products.map((product) => (
-                <div key={product.id} className="min-w-[15rem] min-h-[20rem] shadow-lg rounded-lg flex flex-col gap-4 relative">
-                    <img src={product.image} alt={product.name} className="w-full flex flex-col gap-3 min-h-[12rem] border-2 rounded-t-lg" />
-                    <h1 className="px-3 text-lg font-semibold">{product.name}
-                    </h1>
-                    <div className="mx-3 bg-black/85 text-white font-semibold rounded-lg px-2 py-2 flex flex-row justify-between hover:bg-black/90 active:bg-black absolute bottom-3 right-0 left-0">
-                        <p>${product.price}</p>
-                        <Icon icon="material-symbols:shopping-cart-rounded" width="24" height="24" />
+                <div key={product.id} className="min-w-[15rem] min-h-[20rem] shadow-lg rounded-lg flex flex-col gap-4 relative justify-between py-4 max-h-[31rem]">
+                    <div>
+                        <div className="relative">
+                            <button className="absolute top-3 right-3 text-white font-semibold p-1">
+                                <Icon icon="material-symbols:favorite-outline-rounded" width="24" height="24" />
+                                {/* 
+                                    if product is favorited
+                                    <Icon icon="material-symbols:favorite-rounded" width="24" height="24" />
+                                */}
+                            </button>
+                            <img src={product.image} alt={product.name} className="w-full min-h-[12rem] rounded-t-lg max-w-[16rem]" />
+                        </div>
+                        <h1 className="px-3 text-lg font-semibold">{product.name}
+                        </h1>
                     </div>
-                    
+                    <div className="mx-3 font-semibold rounded-lg px-2 py-2 flex flex-col gap-2 justify-between">
+                        <div className="flex flex-row justify-between">
+                            <p className="text-sm font-light">Product Price</p>
+                            <p>${product.price}</p>
+                        </div>
+                        <hr />
+                        <div className=" bg-black/85 text-white hover:bg-black/90 active:bg-black flex flex-row gap-4 justify-center items-center py-2 rounded-lg">
+                            <Icon icon="material-symbols:shopping-cart-rounded" width="24" height="24" />
+                            <p>Add to Cart</p>
+                        </div>
+                    </div>
+
                 </div>
             ))}
         </div>

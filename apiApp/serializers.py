@@ -34,11 +34,15 @@ class LoginUserSerializer(serializers.Serializer):
 
 
 class ProductListSerializer(serializers.ModelSerializer):
+    image = serializers.ImageField(use_url=True)
+
     class Meta:
         model = Product
         fields = ["id", "name", "slug", "image", "price", "category", "featured"]
 
 class ProductDetailSerializer(serializers.ModelSerializer):
+    image = serializers.ImageField(use_url=True)
+
     class Meta:
         model = Product
         fields = ["id", "name", "slug", "description", "image", "price", "category", "featured"]

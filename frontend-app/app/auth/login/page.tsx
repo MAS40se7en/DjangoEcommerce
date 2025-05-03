@@ -1,6 +1,6 @@
 import LoginForm from "@/components/forms/LoginForm"
 
-const page = ({}) => {
+const page = ({ }) => {
   return <div>
     <LoginForm />
   </div>

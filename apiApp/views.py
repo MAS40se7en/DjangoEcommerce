@@ -125,7 +125,7 @@ def home_product_list(request):
     random_ids = random.sample(product_ids, min(len(product_ids), 20))
     products = Product.objects.filter(id__in=random_ids)
 
-    serializer = ProductListSerializer(products, many=True)
+    serializer = ProductListSerializer(products, many=True, context={'request': request})
     return JsonResponse({
         'data': serializer.data
     })
@@ -134,7 +134,7 @@ def home_product_list(request):
 def product_list(request):
     products = Product.objects.all()
 
-    serializer = ProductListSerializer(products, many=True)
+    serializer = ProductListSerializer(products, many=True, context={'request': request})
     return JsonResponse({
         'data': serializer.data
     })
@@ -142,7 +142,7 @@ def product_list(request):
 @api_view(['GET'])
 def featured_product_list(request):
     products = Product.objects.filter(featured=True)
-    serializer = ProductListSerializer(products, many=True)
+    serializer = ProductListSerializer(products, many=True, context={'request': request})
     return JsonResponse({
         'data': serializer.data
     })
