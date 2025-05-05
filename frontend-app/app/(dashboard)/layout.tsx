@@ -1,7 +1,7 @@
 import Footer from "@/components/pageComponents/Footer"
 import Navbar from "@/components/pageComponents/Navbar"
 
-const layout = ({
+const layout = async ({
   children
 }: Readonly<{ children: React.ReactNode }>) => {
   return <div className="flex flex-col min-h-screen gap-10">

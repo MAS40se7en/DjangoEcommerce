@@ -1,6 +1,7 @@
 import config from "@/config";
 import axios from "axios";
 import clsx, { ClassValue } from "clsx";
+import { cookies } from "next/headers";
 import { twMerge } from "tailwind-merge";
 
 const apiService = {
@@ -105,7 +106,8 @@ const apiService = {
                 headers: {
                     'Accept': 'application/json',
                     'Content-Type': 'application/json'
-                }
+                },
+                credentials: 'include'
             })
                 .then((response) => response.json())
                 .then((json) => {
@@ -127,7 +129,31 @@ const apiService = {
                 headers: {
                     'Accept': 'application/json',
                     'Content-Type': 'application/json'
-                }
+                },
+                credentials: 'include'
+            })
+                .then((response) => response.json())
+                .then((json) => {
+                    console.log('Response: ', json)
+
+                    resolve(json);
+                })
+                .catch((error) => {
+                    reject(error);
+                })
+        })
+    },
+    getUser: async function (url: string): Promise<any> {
+        console.log('get', url)
+
+        return new Promise((resolve, reject) => {
+            fetch(`${config.apiUrl}${url}`, {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                credentials: 'include'
             })
                 .then((response) => response.json())
                 .then((json) => {

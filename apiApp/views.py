@@ -17,6 +17,8 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework_simplejwt.exceptions import InvalidToken
 from rest_framework_simplejwt.views import TokenRefreshView
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 endpoint_secret = settings.STRIPE_WEBHOOK
@@ -26,98 +28,88 @@ User = get_user_model()
 class UserInfoView(RetrieveUpdateAPIView):
     permission_classes = (IsAuthenticated,)
     serializer_class = CustomUserSerializer
-
+    
     def get_object(self):
         return self.request.user
 
 class UserRegistrationView(CreateAPIView):
     serializer_class = RegisterUserSerializer
 
-class UserLoginView(APIView):
+
+@method_decorator(csrf_exempt, name='dispatch')
+class LoginView(APIView):
     def post(self, request):
         serializer = LoginUserSerializer(data=request.data)
-
-        #generating tokens for user
+        
         if serializer.is_valid():
             user = serializer.validated_data
             refresh = RefreshToken.for_user(user)
             access_token = str(refresh.access_token)
-
-            response = Response({
-                "user": CustomUserSerializer(user).data
-            },
-                status=status.HTTP_200_OK
-            )
-
-            response.set_cookie(
-                key='access_token', 
-                value=access_token, 
-                httponly=True,
-                secure=True,
-                samesite="None")
             
-            response.set_cookie(
-                key='refresh_token',
-                value=str(refresh),
-                httponly=True,
-                secure=True,
-                samesite="None"
-            )
-
+            response = Response({
+                                "user": CustomUserSerializer(user).data},
+                                status=status.HTTP_200_OK
+                                )
+            
+            response.set_cookie(key="access_token", 
+                                value=access_token,
+                                httponly=True,
+                                secure=False,
+                                samesite="Lax",
+                                path="/",
+                                max_age=3600)
+            
+            response.set_cookie(key="refresh_token",
+                                value=str(refresh),
+                                httponly=True,
+                                secure=False,
+                                samesite="Lax",
+                                path="/",
+                                max_age=3600)
             return response
+        return Response( serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         
-        return Response(
-            serializer.errors, status=status.HTTP_400_BAD_REQUEST
-        )
-
-class UserLogoutView(APIView):
+class LogoutView(APIView):
+    
     def post(self, request):
         refresh_token = request.COOKIES.get("refresh_token")
+        
         if refresh_token:
             try:
                 refresh = RefreshToken(refresh_token)
                 refresh.blacklist()
             except Exception as e:
-                return Response({
-                    "error": "error invalidating token: " + str(e) 
-                }, status=status.HTTP_400_BAD_REQUEST)
+                return Response({"error":"Error invalidating token:" + str(e) }, status=status.HTTP_400_BAD_REQUEST)
         
-        response = Response({
-            "message": "successfully logged out"
-        }, status=status.HTTP_200_OK)
+        response = Response({"message": "Successfully logged out!"}, status=status.HTTP_200_OK)
         response.delete_cookie("access_token")
         response.delete_cookie("refresh_token")
-        return response
-    
+        
+        return response    
+
 class CookieTokenRefreshView(TokenRefreshView):
     def post(self, request):
-        refresh_token = request.COOKIES.get("refresh_token")
-
-        if not refresh_token:
-            return Response({
-                "error": "Refresh toke not provided"
-            }, status=status.HTTP_400_BAD_REQUEST)
         
+        refresh_token = request.COOKIES.get("refresh_token")
+        
+        if not refresh_token:
+            return Response({"error":"Refresh token not provided"}, status= status.HTTP_401_UNAUTHORIZED)
+    
         try:
             refresh = RefreshToken(refresh_token)
             access_token = str(refresh.access_token)
-
-            response = Response({
-                "message": "Token refreshed successfully",
-            }, status=status.HTTP_200_OK)
-
-            response.set_cookie(
-                key='access_token', 
-                value=access_token, 
-                httponly=True,
-                secure=True,
-                samesite="None")
             
+            response = Response({"message": "Access token token refreshed successfully"}, status=status.HTTP_200_OK)
+            response.set_cookie(key="access_token", 
+                                value=access_token,
+                                httponly=True,
+                                secure=False,
+                                samesite="Lax",
+                                path="/",
+                                max_age=3600)
             return response
         except InvalidToken:
-            return Response({
-                "error": "Invalid Token"
-            }, status=status.HTTP_401_UNAUTHORIZED)
+            return Response({"error":"Invalid token"}, status=status.HTTP_401_UNAUTHORIZED)
 
 @api_view(['GET'])
 def home_product_list(request):

@@ -1,6 +1,7 @@
 from django.urls import path
 from django.conf.urls.static import static
 from django.conf import settings
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView, TokenVerifyView
 from . import views
 
 urlpatterns = [
@@ -28,7 +29,9 @@ urlpatterns = [
     #user
     path('user_info/', views.UserInfoView.as_view(), name='user_info'),
     path('register/', views.UserRegistrationView.as_view(), name='user_register'),
-    path('login/', views.UserLoginView.as_view(), name='user_login'),
-    path('logout/', views.UserLogoutView.as_view(), name='user_logout'),
-    path('refresh/', views.CookieTokenRefreshView.as_view(), name='token_refresh')
+    path('login/', views.LoginView.as_view(), name='user_login'),
+    path('logout/', views.LogoutView.as_view(), name='user_logout'),
+    path('refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('token/verify/', TokenVerifyView.as_view(), name='token_verify'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

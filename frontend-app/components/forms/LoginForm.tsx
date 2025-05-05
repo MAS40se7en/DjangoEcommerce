@@ -9,6 +9,7 @@ import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import apiService from "@/lib/utils";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 
 const LoginForm = ({ }) => {
   const form = useForm<z.infer<typeof loginSchema>>({
@@ -27,7 +28,9 @@ const LoginForm = ({ }) => {
       password: values.password
     }
 
-    apiService.logUserIn(url, data)
+    apiService.logUserIn(url, data).then(() => {
+      redirect('/')
+    })
   }
 
   return (
